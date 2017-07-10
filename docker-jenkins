@@ -1,0 +1,28 @@
+#!/bin/bash
+
+echo "Docker jenkins - in process..."
+
+BROWSER_PORT=80
+EXECUTOR_PORT=50000
+
+# the oficial image creates a jenkins user that's not a sudoer, this generates lots of problems
+#docker run  -p $BROWSER_PORT:8080 -p $EXECUTOR_PORT:50000 -v /var/run/docker.sock:/var/run/docker.sock -v ~/jenkins_home:/var/jenkins_home --name jenkins jenkinsci/jenkins:lts
+
+# Jenkins Docker image that allowes the Jenkins user to be sudoer, thus avoiding problems mounting the jenkins_home volume
+docker run -d -p 80:8080 -p 50000:50000 -v /var/run/docker.sock:/var/run/docker.sock -v ~/jenkins_home:/var/jenkins_home --name jenkins beyondcoding/jenkins
+
+echo "Docker jenkins - open ports."
+
+sudo ufw allow $BROWSER_PORT
+sudo ufw allow $EXECUTOR_PORT
+sudo ufw status
+
+TIME=30
+echo "Docker jenkins - waiting $TIME seconds for the initial admin password to be created."
+sleep $TIME
+
+echo "Docker jenkins - show initial admin password."
+
+docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+
+echo "Docker jenkins - complete."
