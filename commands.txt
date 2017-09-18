@@ -1,0 +1,29 @@
+--- Run the applications ---
+
+wget https://raw.githubusercontent.com/beyond-coding/docker-jenkins/master/docker-jenkins.sh && sh docker-jenkins.sh
+
+---- terminal docker commands
+
+docker run -d \
+    -v ~/caddy/Caddyfile:/etc/Caddyfile \
+    -v ~/caddy/certificates:/root/.caddy \
+    -v ~/caddy/srv:/srv \
+    -p 80:80 -p 443:443 \
+    --restart=unless-stopped \
+    --name caddy \
+    --link nexus:nexus \
+    abiosoft/caddy
+
+
+docker run -d \
+    -v ~/nexus:/sonatype-work \
+    --restart=unless-stopped \
+    --name nexus \
+    sonatype/nexus3
+
+docker run -d \
+    -v ~/nexus:/sonatype-work \
+    -p 8081:8081 -p 5000:5000 -p 5001:5001 \
+    --restart=unless-stopped \
+    --name nexus \
+    sonatype/nexus3

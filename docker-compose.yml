@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  caddy:
+    restart: always
+    image: abiosoft/caddy
+    depends_on:
+    - nexus # Ensures that caddy will relink if the other container is restarted
+    ports:
+    - 80:80
+    - 443:443
+    volumes:
+    - ./caddy/Caddyfile:/etc/Caddyfile
+    - ./caddy/certificates:/root/.caddy # Your certificates will be stored here
+    - ./caddy/logs:/var/log/caddy:Z # Caddy logs will be stored here
+
+  nexus:
+    restart: always
+    image: beyondcoding/jenkins
+    ports:
+    - 8080:8080
+    - 50000:50000
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - jenkins_data:/var/jenkins_home
+
+volumes:
+  jenkins-data:

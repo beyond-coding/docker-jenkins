@@ -1,0 +1,12 @@
+jenkins.beyond-coding.com {
+    tls guillermo.herrero@beyond-coding.com
+
+    proxy / http://172.18.0.2:8080 {
+        fail_timeout 0s
+        websocket
+        transparent
+    }
+
+    log stdout
+    errors stdout
+}
